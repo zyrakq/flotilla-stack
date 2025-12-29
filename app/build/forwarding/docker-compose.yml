@@ -1,0 +1,63 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "${LOG_MAX_SIZE:-10m}"
+    max-file: "${LOG_MAX_FILE:-3}"
+    compress: "${LOG_COMPRESS:-true}"
+services:
+  zooid:
+    container_name: zooid
+    image: ghcr.io/coracle-social/zooid
+    restart: unless-stopped
+    logging: *default-logging
+    configs:
+      - source: zoid-config
+        target: /app/config/${ZOID_HOST}
+    volumes:
+      - zooid-media:/app/media
+      - zooid-data:/app/data
+    networks:
+      - zooid-network
+    ports:
+      - 3334:3334
+configs:
+  zoid-config:
+    content: |
+      host = "${ZOID_HOST}"
+      schema = "${ZOID_SCHEMA}"
+      secret = "${ZOID_SECRET_KEY}"
+
+      [info]
+      name = "${ZOID_INFO_NAME}"
+      icon = "${ZOID_INFO_ICON}"
+      pubkey = "${ZOID_INFO_PUBKEY}"
+      description = "${ZOID_INFO_DESCRIPTION}"
+
+      [policy]
+      strip_signatures = ${ZOID_POLICY_STRIP_SIGNATURES}
+
+      [groups]
+      enabled = ${ZOID_GROUPS_ENABLED}
+      auto_join = ${ZOID_GROUPS_AUTO_JOIN}
+
+      [management]
+      enabled = ${ZOID_MANAGEMENT_ENABLED}
+      methods = [${ZOID_MANAGEMENT_METHODS}]
+
+      [blossom]
+      enabled = ${ZOID_BLOSSOM_ENABLED}
+
+      [roles.member]
+      can_invite = ${ZOID_ROLES_MEMBER_CAN_INVITE}
+
+      [roles.admin]
+      pubkeys = [ZOID_ROLES_ADMIN_PUBKEYS]
+      can_manage = ${ZOID_ROLES_ADMIN_CAN_MANAGE}
+volumes:
+  zooid-media:
+    name: zooid-media
+  zooid-data:
+    name: zooid-data
+networks:
+  zooid-network:
+    name: zooid-network

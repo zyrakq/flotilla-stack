@@ -1,0 +1,8 @@
+services:
+  flotilla:
+    networks:
+      - flotilla-workspace-network
+
+networks:
+  flotilla-workspace-network:
+    external: true

@@ -1,0 +1,4 @@
+services:
+  zooid:
+    ports:
+      - 3334:3334

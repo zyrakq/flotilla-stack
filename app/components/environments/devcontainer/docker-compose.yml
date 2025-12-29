@@ -1,0 +1,8 @@
+services:
+  zooid:
+    networks:
+      - zooid-workspace-network
+
+networks:
+  zooid-workspace-network:
+    external: true
